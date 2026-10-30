@@ -1,0 +1,105 @@
+{
+  "ignore": [
+    ".github/**",
+    ".dependency-cruiser.cjs",
+    "eslint.config.mjs",
+    ".prettierrc.json",
+    ".prettierignore",
+    ".env.example",
+    ".npmrc"
+  ],
+  "fullSuiteTriggers": ["next.config.ts", "postcss.config.mjs"],
+  "mappings": [
+    {
+      "name": "Home route",
+      "changed": ["src/app/(site)/page.tsx", "src/modules/home/**"],
+      "tests": [
+        "tests/e2e/home.spec.ts",
+        "tests/e2e/foundation.spec.ts",
+        "tests/e2e/navigation.spec.ts",
+        "tests/e2e/keyboard.spec.ts",
+        "tests/e2e/responsive.spec.ts",
+        "tests/visual/screens.spec.ts"
+      ],
+      "reason": "these browser tests visit the home page"
+    },
+    {
+      "name": "Wall route",
+      "changed": ["src/app/(site)/wall/**", "src/modules/confessions/**"],
+      "tests": [
+        "tests/e2e/wall.spec.ts",
+        "tests/e2e/keyboard.spec.ts",
+        "tests/e2e/responsive.spec.ts",
+        "tests/visual/screens.spec.ts"
+      ],
+      "reason": "these browser tests visit /wall"
+    },
+    {
+      "name": "Write route",
+      "changed": ["src/app/(site)/write/**", "src/modules/confessions/**"],
+      "tests": ["tests/e2e/composer.spec.ts", "tests/visual/screens.spec.ts"],
+      "reason": "these browser tests visit /write"
+    },
+    {
+      "name": "Reader route",
+      "changed": ["src/app/stories/**", "src/modules/reading/**"],
+      "tests": ["tests/e2e/reader.spec.ts", "tests/e2e/keyboard.spec.ts", "tests/visual/screens.spec.ts"],
+      "reason": "these browser tests visit the story reader"
+    },
+    {
+      "name": "Design route",
+      "changed": ["src/app/(site)/design/**"],
+      "tests": ["tests/e2e/design-system.spec.ts", "tests/visual/screens.spec.ts"],
+      "reason": "these browser tests visit /design"
+    },
+    {
+      "name": "App shell",
+      "changed": [
+        "src/app/layout.tsx",
+        "src/app/(site)/layout.tsx",
+        "src/app/error.tsx",
+        "src/app/not-found.tsx",
+        "src/app/globals.css",
+        "src/shared/**"
+      ],
+      "tests": ["tests/e2e/**", "tests/visual/**"],
+      "reason": "every page renders the shared shell, styles and UI kit"
+    },
+    {
+      "name": "Design tokens",
+      "changed": ["src/shared/design/tokens.css"],
+      "tests": ["src/shared/design/contrast.test.ts"],
+      "reason": "the contrast test reads tokens.css from disk"
+    },
+    {
+      "name": "Animation rule scan",
+      "changed": ["src/**/*.ts", "src/**/*.tsx"],
+      "tests": ["src/shared/design/no-animation-logic.test.ts"],
+      "reason": "this test scans every source file under src"
+    },
+    {
+      "name": "Visual baselines",
+      "changed": ["tests/visual/__screenshots__/**", "tools/visual/**"],
+      "tests": ["tests/visual/screens.spec.ts"],
+      "reason": "screenshot baselines and the Docker runner belong to the visual suite"
+    },
+    {
+      "name": "Component test setup",
+      "changed": ["tests/component/setup.ts"],
+      "tests": ["src/**/*.test.tsx"],
+      "reason": "Vitest loads this setup file for every component test"
+    },
+    {
+      "name": "Database",
+      "changed": ["tests/integration/setup.ts", "prisma/**", "prisma.config.ts", "docker-compose.yml"],
+      "tests": ["tests/integration/**"],
+      "reason": "integration tests run against the Prisma schema and the Docker database"
+    },
+    {
+      "name": "Writing rules CLI",
+      "changed": ["tools/writing-rules/**"],
+      "tests": ["tools/writing-rules/rules.test.ts"],
+      "reason": "the writing rules tool is covered by its rule tests"
+    }
+  ]
+}

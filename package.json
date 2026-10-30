@@ -1,0 +1,21 @@
+{
+  "name": "riskpilot",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Explainable test impact analysis for Vitest and Playwright projects.",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=24.0.0 <25"
+  },
+  "scripts": {
+    "riskpilot": "node src/cli.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "node --test \"test/**/*.test.ts\"",
+    "verify": "npm run typecheck && npm test"
+  },
+  "devDependencies": {
+    "@types/node": "24.19.2",
+    "typescript": "6.0.3"
+  }
+}
