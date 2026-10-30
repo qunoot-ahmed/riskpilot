@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { analyze } from "../src/analyze.ts";
 import { defaultConfig } from "../src/config.ts";
-import { toText } from "../src/report.ts";
+import { toMarkdown, toText } from "../src/report.ts";
 import type { ChangedFile, Config, Mapping } from "../src/types.ts";
 
 // A tiny project: one unit test reaches money.ts through cart.ts, one e2e test only visits a page.
@@ -197,5 +197,13 @@ describe("analyze safety when the import graph is incomplete", () => {
   it("warns when a selected test has no detected framework", () => {
     const result = run([modified("src/plain.test.ts")], undefined, { "src/plain.test.ts": "export {};" });
     assert.ok(result.warnings.some((warning) => warning.includes("no detected framework")));
+  });
+});
+
+describe("toMarkdown", () => {
+  it("escapes Markdown characters in paths so tables and emphasis stay intact", () => {
+    const markdown = toMarkdown(run([modified("tests/visual/__screenshots__/a|b.png")]));
+    assert.match(markdown, /tests\/visual\/\_\_screenshots\_\_\/a\\|b\.png/);
+    assert.doesNotMatch(markdown, /__screenshots__/);
   });
 });

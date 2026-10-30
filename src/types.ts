@@ -49,7 +49,10 @@ export interface SelectedTest {
 }
 
 export interface AnalysisResult {
+  status: "ok";
   repository: string;
+  /** "merge-base" when base is the merge base of the requested base and head. */
+  comparison: "direct" | "merge-base";
   base: string;
   head: string;
   mode: "selective" | "full-suite";
