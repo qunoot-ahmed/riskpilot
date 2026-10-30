@@ -12,14 +12,26 @@ Node.js 24. There are no runtime dependencies; TypeScript runs directly through 
 
 ## Usage
 
-    node src/cli.ts <repo> <base> [head] [--config <file>] [--json] [--output <file>]
+    node src/cli.ts <repo> <base> [head] [--merge-base] [--config <file>] [--json] [--output <file>] [--markdown <file>]
 
-The head revision defaults to HEAD. Without --config, RiskPilot uses riskpilot.config.json from the repository root when it exists.
+The head revision defaults to HEAD. With --merge-base, the comparison starts at the merge base of base and head, which is what a pull request changes. Without --config, RiskPilot reads riskpilot.config.json from the head revision when it exists. A change to that file triggers the full suite, because new mappings cannot vouch for themselves.
 
     node src/cli.ts ../the-unsaid-app HEAD~1 HEAD --config examples/the-unsaid.riskpilot.json
-    node src/cli.ts ../my-app main feature/cart --json --output impact.json
+    node src/cli.ts ../my-app main feature/cart --merge-base --output impact.json --markdown impact.md
 
-Exit codes: 0 on success, 1 on an error such as an unknown revision, 2 on invalid arguments.
+Exit codes: 0 on success, 1 on an error such as an unknown revision, an invalid config or no merge base, 2 on invalid arguments. On an error, the --output file contains {"status": "error", "error": "..."} and the --markdown file says the analysis failed, so a failure is never mistaken for a selection. A successful JSON result has "status": "ok".
+
+## Continuous integration
+
+RiskPilot runs in observation mode in the CI of The Unsaid: a pull request job recommends test files and explains them, while every existing job still runs every test. The job:
+
+- checks out the pull request head with full history and RiskPilot at a pinned, reviewed commit SHA, without persisted credentials;
+- installs nothing and runs no pull request code, because RiskPilot has no runtime dependencies and only reads Git objects;
+- runs the CLI with --merge-base against the base and head SHAs of the pull request;
+- publishes the Markdown summary as the job summary and uploads the JSON, Markdown and text reports as an artifact;
+- fails visibly when analysis fails, and fails if the analysed checkout was changed.
+
+See .github/workflows/ci.yml in The Unsaid for the job. It reports selected versus total test files only; nothing is skipped yet, so it saves no time.
 
 ## How a decision is made
 

@@ -16,6 +16,8 @@ export const DEFAULT_FULL_SUITE_TRIGGERS = [
   "playwright.config.*",
   ".nvmrc",
   ".node-version",
+  // Changing the mappings changes the selection itself, so it cannot be checked by that selection.
+  "riskpilot.config.json",
 ];
 
 /** Changes to these files cannot affect test results. */
@@ -30,18 +32,28 @@ export function defaultConfig(): Config {
   };
 }
 
-/** Reads a RiskPilot JSON config. Its lists extend the defaults rather than replacing them. */
+/** Reads a RiskPilot JSON config file. Its lists extend the defaults rather than replacing them. */
 export function loadConfig(path: string | undefined): Config {
-  const config = defaultConfig();
-  if (!path) return config;
-
-  let raw: unknown;
+  if (!path) return defaultConfig();
+  let source: string;
   try {
-    raw = JSON.parse(readFileSync(path, "utf8"));
+    source = readFileSync(path, "utf8");
   } catch (error) {
     throw new Error(`Could not read config ${path}: ${(error as Error).message}`);
   }
-  if (!isObject(raw)) throw new Error(`Config ${path} must contain a JSON object.`);
+  return parseConfig(source, path);
+}
+
+/** Parses RiskPilot config JSON. The label names the source in error messages. */
+export function parseConfig(source: string, label: string): Config {
+  const config = defaultConfig();
+  let raw: unknown;
+  try {
+    raw = JSON.parse(source);
+  } catch (error) {
+    throw new Error(`Could not read config ${label}: ${(error as Error).message}`);
+  }
+  if (!isObject(raw)) throw new Error(`Config ${label} must contain a JSON object.`);
 
   config.fullSuiteTriggers.push(...stringList(raw.fullSuiteTriggers, "fullSuiteTriggers"));
   config.ignore.push(...stringList(raw.ignore, "ignore"));

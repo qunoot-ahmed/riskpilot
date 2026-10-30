@@ -8,6 +8,7 @@ export interface AnalysisInput {
   repository: string;
   base: string;
   head: string;
+  comparison?: AnalysisResult["comparison"];
   changes: ChangedFile[];
   /** Files of the head revision. */
   snapshot: Snapshot;
@@ -133,7 +134,9 @@ export function analyze(input: AnalysisInput): AnalysisResult {
   }
 
   return {
+    status: "ok",
     repository: input.repository,
+    comparison: input.comparison ?? "direct",
     base: input.base,
     head: input.head,
     mode,

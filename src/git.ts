@@ -29,6 +29,15 @@ export function resolveRevision(repo: string, revision: string): string {
   }
 }
 
+/** Finds the best common ancestor, so a pull request is compared only with what it changes. */
+export function mergeBase(repo: string, base: string, head: string): string {
+  try {
+    return git(repo, ["merge-base", base, head]).toString().trim();
+  } catch {
+    throw new Error(`No merge base between ${base} and ${head}. Fetch full history (fetch-depth: 0) or check the revisions.`);
+  }
+}
+
 const STATUS: Record<string, ChangeStatus> = {
   A: "added",
   M: "modified",
